@@ -1,4 +1,6 @@
 import { useRef, use, useEffect } from "react";
+import { BSPNode } from "./game/system/DungeonGenerator";
+import type {Rectangle}  from "./game/system/DungeonGenerator";
 
 export const GameCanvas = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -32,6 +34,18 @@ export const GameCanvas = () => {
             if (keys['ArrowLeft'] || keys['a']) playerX -= movement;
             if (keys['ArrowRight'] || keys['d']) playerX += movement;
             
+            if (keys[' ']){
+                const start:Rectangle = {
+                    x : 0,
+                    y : 0,
+                    width: canvas.width,
+                    height:  canvas.height
+                }
+                const root = new BSPNode(start);
+                root.split(5, 150);
+                const allrooms = root.getAllRooms();
+                console.log(allrooms.length);
+            }
             //bound check
             if(playerX < 0)
                 playerX = 0;
