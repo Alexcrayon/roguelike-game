@@ -1,5 +1,5 @@
 
-interface Rectangle {
+export interface Rectangle {
   x: number;
   y: number;
   width: number;
@@ -40,7 +40,8 @@ export class BSPNode{
      if(rand > 0.5){
         //split vertically
         //create two room horizontally
-        const splitX = this.area.x + this.area.width / 2;
+        const ratio = 0.3 + Math.random()*0.4;
+        const splitX = this.area.x + this.area.width * ratio;
         const leftArea: Rectangle = {
             x : this.area.x,
             y : this.area.y,
@@ -49,7 +50,7 @@ export class BSPNode{
         } 
 
         const rightArea: Rectangle = {
-            x : this.area.x,
+            x : splitX,
             y : this.area.y,
             width: (this.area.x + this.area.width) - splitX,
             height: this.area.height
@@ -61,7 +62,9 @@ export class BSPNode{
      else
      {
         //split horizontally
-        const splitY = this.area.y + this.area.height / 2;
+         const ratio = 0.3 + Math.random()*0.4;
+        //const splitX = this.area.x + this.area.width * ratio;
+        const splitY = this.area.y + this.area.height * ratio;
         const topArea: Rectangle = {
             x : this.area.x,
             y : this.area.y,
@@ -71,7 +74,7 @@ export class BSPNode{
 
         const botArea: Rectangle = {
             x : this.area.x,
-            y : this.area.y,
+            y : splitY,
             width: this.area.width,
             height: (this.area.y + this.area.height) - splitY
         } 
@@ -80,13 +83,14 @@ export class BSPNode{
         this.right = new BSPNode(botArea);
      }
     depth--;
-    this.left.split(depth, 20);
+    this.left.split(depth, minSize);
 
-    this.right.split(depth, 20);
+    this.right.split(depth, minSize);
 
 
   };
   createRoom(): Room{
+    //temporarily
     const room:Room = {
         x:100,
         y:100,
@@ -98,9 +102,21 @@ export class BSPNode{
 //   getRoom(): Room | null{
 
 //   };
-//   getAllRooms(): Room[]{
+  getAllRooms(): Room[]{
+    if (this.room !== null) {
+      return [this.room]
+    }
 
-//   };
+    const rooms: Room[] = [];
+    if(this.left !== null){
+      rooms.push(...this.left.getAllRooms());
+    }
+    if(this.right !== null){
+      rooms.push(...this.right.getAllRooms());
+    }
+
+    return rooms;
+  };
 //   private isLeaf(): boolean{
 
 //   };
