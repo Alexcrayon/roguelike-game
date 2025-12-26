@@ -2,6 +2,15 @@ import { useRef, use, useEffect } from "react";
 import { BSPNode } from "./game/system/DungeonGenerator";
 import type {Rectangle}  from "./game/system/DungeonGenerator";
 
+interface Props {
+    width: number;
+    height: number;
+    depth: number;
+    minSize: number;
+}
+
+
+
 export const GameCanvas = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -22,9 +31,31 @@ export const GameCanvas = () => {
         
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
-
+        
+         
+        const start:Rectangle = {
+            x : 0,
+            y : 0,
+            width: canvas.width,
+            height: canvas.height
+        }
+        const root = new BSPNode(start);
+        root.split(5, 150);
+        var allrooms = root.getAllRooms();
  
-
+    const DebugDungeon = ({width, height, depth, minSize} : Props) =>{
+        const start:Rectangle = {
+                x : 0,
+                y : 0,
+                width: width,
+                height: height
+            }
+            const root = new BSPNode(start);
+            root.split(depth, minSize);
+            const allrooms = root.getAllRooms();
+        return allrooms;
+    }
+    
 
     const gameloop = () =>{
 
@@ -33,18 +64,18 @@ export const GameCanvas = () => {
             if (keys['ArrowDown'] || keys['s']) playerY += movement;
             if (keys['ArrowLeft'] || keys['a']) playerX -= movement;
             if (keys['ArrowRight'] || keys['d']) playerX += movement;
-            
+           
+
+            //const allrooms = null;
             if (keys[' ']){
-                const start:Rectangle = {
-                    x : 0,
-                    y : 0,
+                const prop: Props = {
                     width: canvas.width,
-                    height:  canvas.height
-                }
-                const root = new BSPNode(start);
-                root.split(5, 150);
-                const allrooms = root.getAllRooms();
-                console.log(allrooms.length);
+                    height: canvas.height,
+                    depth: 3,
+                    minSize: 200
+                };
+                allrooms = DebugDungeon(prop);
+                console.log('debug dungeon..');
             }
             //bound check
             if(playerX < 0)
@@ -64,6 +95,18 @@ export const GameCanvas = () => {
             ctx.strokeStyle = 'white';
             ctx.lineWidth = 4;
             ctx.strokeRect(0, 0, canvas.width, canvas.height);
+            
+
+             // Draw rooms using canvas API
+            if(allrooms){
+                allrooms.forEach(room => {
+                    ctx.fillStyle = 'rgba(100, 100, 255, 0.0)';
+                    ctx.fillRect(room.x, room.y, room.width, room.height);
+                    ctx.strokeStyle = 'white';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(room.x, room.y, room.width, room.height);
+                });
+            }
 
             requestAnimationFrame(gameloop);
     };

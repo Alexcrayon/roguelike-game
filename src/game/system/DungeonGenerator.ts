@@ -32,7 +32,7 @@ export class BSPNode{
     
      if (depth == 0 || this.area.width < minSize || this.area.height < minSize){
 
-        this.room = this.createRoom();
+        this.room = this.createRoom(this.area.x, this.area.y);
         return;
      }
 
@@ -89,13 +89,24 @@ export class BSPNode{
 
 
   };
-  createRoom(): Room{
+  createRoom(xPos:number, yPos:number): Room{
+
+    const padding = 2;  // tiles of wall/corridor space
+    const minRoomSize = 4;
+  
+    const maxWidth = this.area.width - padding * 2;
+    const maxHeight = this.area.height - padding * 2;
+
+    //need to find to a way to debug generated room
+    //draw it on screen
+
+
     //temporarily
     const room:Room = {
-        x:100,
-        y:100,
-        width:100,
-        height:100,
+        x: xPos+padding,
+        y: yPos+padding,
+        width:maxWidth,
+        height:maxHeight,
     }
     return room;
   };
