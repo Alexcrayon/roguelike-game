@@ -5,7 +5,7 @@ export interface Rectangle {
   width: number;
   height: number;
 }
-interface Room {
+export interface Room {
     x: number;
     y: number;
     width :number;
@@ -128,28 +128,5 @@ export class BSPNode{
 
     return rooms;
   };
-//   private isLeaf(): boolean{
 
-//   };
-// }
-
-// export class DungeonGenerator {
-//   // Static method (like static in Java)
-//   static generate(width: number, height: number): Dungeon{
-//     return null;
-//   };
-  
-//   // Helper methods
-//   private static createTiles(width: number, height: number): Tile[][];
-//   private static placeRoomsOnTiles(tiles: Tile[][], rooms: Room[]): void;
-//   private static createCorridors(tiles: Tile[][], rooms: Room[]): void;
-// }
-
-// // ========== RETURN TYPE ==========
-
-// interface Dungeon {
-//   width: number;
-//   height: number;
-//   tiles: Tile[][];
-//   rooms: Room[];
 }
