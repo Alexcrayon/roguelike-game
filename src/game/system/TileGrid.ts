@@ -26,14 +26,22 @@ export function createGrid(width: number, height: number): Tile[][] {
          }
         grid.push(row)
     }
+    console.log(grid);
     return grid;
 }
 
 export function carveRoom(grid: Tile[][], room: Room): void {
     // ...
     //carve the room area to floor
-    for(let i = room.y; i < room.height; i++){
-        for(let j = room.x; j<room.width; j++){
+    //room is in pixel coordinate
+    //room split is not tile perfect
+    const startY = Math.floor(room.y / TILE_SIZE);
+    const endY = Math.floor((room.y + room.height) / TILE_SIZE);
+    const startX = Math.floor(room.x / TILE_SIZE);
+    const endX = Math.floor((room.x + room.width) / TILE_SIZE);
+
+    for(let i = startY; i < endY; i++){
+        for(let j = startX; j < endX; j++){
             grid[i][j].type = TileType.Floor;
         }
     }

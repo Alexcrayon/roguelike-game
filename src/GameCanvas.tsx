@@ -1,6 +1,7 @@
 import { useRef, use, useEffect } from "react";
 import { BSPNode } from "./game/system/DungeonGenerator";
 import type {Rectangle}  from "./game/system/DungeonGenerator";
+import { carveAllRooms, createGrid, TILE_SIZE, TileType } from "./game/system/TileGrid";
 
 interface Props {
     width: number;
@@ -40,8 +41,15 @@ export const GameCanvas = () => {
             height: canvas.height
         }
         const root = new BSPNode(start);
-        root.split(5, 150);
+        root.split(3, 200);
         var allrooms = root.getAllRooms();
+
+        //create grid
+        const gridX = canvas.width / TILE_SIZE;
+        const gridY = canvas.height / TILE_SIZE;
+        var grid = createGrid(gridX, gridY);
+        carveAllRooms(grid, allrooms);
+        //grid[50][50].type = TileType.Floor;
  
     const DebugDungeon = ({width, height, depth, minSize} : Props) =>{
         const start:Rectangle = {
@@ -78,19 +86,20 @@ export const GameCanvas = () => {
                 console.log('debug dungeon..');
             }
             //bound check
+            const PLAYER_SIZE = 32;
             if(playerX < 0)
                 playerX = 0;
-            if(playerX > 750)
-                playerX = 750;
+            if(playerX > canvas.width - PLAYER_SIZE)
+                playerX = canvas.width - PLAYER_SIZE;
             if(playerY < 0)
                 playerY = 0;
-            if(playerY > 550)
-                playerY = 550;
+            if(playerY > canvas.height - PLAYER_SIZE)
+                playerY = canvas.height - PLAYER_SIZE;
             //playerX = Math.min(playerX, 800);
             //playerY = Math.min(playerY, 600);
 
             ctx.fillStyle = 'red';
-            ctx.fillRect(playerX,playerY,50,50);
+            ctx.fillRect(playerX,playerY, PLAYER_SIZE, PLAYER_SIZE);
 
             ctx.strokeStyle = 'white';
             ctx.lineWidth = 4;
@@ -107,6 +116,26 @@ export const GameCanvas = () => {
                     ctx.strokeRect(room.x, room.y, room.width, room.height);
                 });
             }
+            if(grid){
+                for(let i = 0; i<grid.length; i++){
+                    for(let j = 0; j < grid[0].length; j++){
+
+
+
+                        if(grid[i][j].type == TileType.Wall){
+                            ctx.fillStyle = 'rgba(25, 168, 0, 0.6)';
+                            ctx.fillRect(j*16,i*16,16,16);
+                        }
+                        else if(grid[i][j].type == TileType.Floor){
+                            ctx.fillStyle = 'rgba(220, 136, 136, 0.5)';
+                            ctx.fillRect(j*16,i*16,16,16);
+                        }
+                    }
+                }
+            }
+
+           
+            
 
             requestAnimationFrame(gameloop);
     };
@@ -134,7 +163,7 @@ export const GameCanvas = () => {
             <h1 style={{ color: 'white', fontSize: '32px', marginBottom: '20px' }}>
                 Canvas Game
             </h1>
-            <canvas ref ={canvasRef} width={800} height={600} />
+            <canvas ref ={canvasRef} width={640} height={480} />
         
         </div>;
 

@@ -28,6 +28,7 @@ export class BSPNode{
   };
   
   // Methods
+  //area split currently is not pixel perfect to the tile system
   split(depth: number, minSize: number): void{
     
      if (depth == 0 || this.area.width < minSize || this.area.height < minSize){
@@ -91,13 +92,12 @@ export class BSPNode{
   };
   createRoom(xPos:number, yPos:number): Room{
 
-    const padding = 2;  // tiles of wall/corridor space
+    const padding = 16;  // tiles of wall/corridor space
     const minRoomSize = 4;
   
     const maxWidth = this.area.width - padding * 2;
     const maxHeight = this.area.height - padding * 2;
 
-    //need to find to a way to debug generated room
     //draw it on screen
 
 
