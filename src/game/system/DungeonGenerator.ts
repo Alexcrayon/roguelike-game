@@ -6,12 +6,26 @@ export interface Rectangle {
   height: number;
 }
 export interface Room {
-    x: number;
-    y: number;
-    width :number;
-    height: number;
+  x: number;
+  y: number;
+  width :number;
+  height: number;
+
+  type: roomType;
 
 }
+
+export enum roomType{
+  L,
+  Rec,
+}
+
+export function randomEnum<T>(enumObj: object): T {
+    const values = Object.values(enumObj).filter(v => typeof v === 'number');
+    return values[Math.floor(Math.random() * values.length)] as T;
+}
+
+
 
 export class BSPNode{
   private area: Rectangle ;
@@ -41,8 +55,9 @@ export class BSPNode{
      if(rand > 0.5){
         //split vertically
         //create two room horizontally
+        // 0.3 0.4 0.5 
         const ratio = 0.3 + Math.random()*0.4;
-        const splitX = this.area.x + this.area.width * ratio;
+        const splitX = this.area.x + Math.floor(this.area.width * ratio);
         const leftArea: Rectangle = {
             x : this.area.x,
             y : this.area.y,
@@ -63,9 +78,9 @@ export class BSPNode{
      else
      {
         //split horizontally
-         const ratio = 0.3 + Math.random()*0.4;
+        const ratio = 0.3 + Math.random()*0.4;
         //const splitX = this.area.x + this.area.width * ratio;
-        const splitY = this.area.y + this.area.height * ratio;
+        const splitY = this.area.y + Math.floor(this.area.height * ratio);
         const topArea: Rectangle = {
             x : this.area.x,
             y : this.area.y,
@@ -92,21 +107,19 @@ export class BSPNode{
   };
   createRoom(xPos:number, yPos:number): Room{
 
-    const padding = 16;  // tiles of wall/corridor space
-    const minRoomSize = 4;
+    const padding = 1;  // tiles of wall/corridor space
+    //const minRoomSize = 4;
   
     const maxWidth = this.area.width - padding * 2;
     const maxHeight = this.area.height - padding * 2;
 
     //draw it on screen
-
-
-    //temporarily
     const room:Room = {
         x: xPos+padding,
         y: yPos+padding,
         width:maxWidth,
         height:maxHeight,
+        type: randomEnum(roomType)
     }
     return room;
   };
