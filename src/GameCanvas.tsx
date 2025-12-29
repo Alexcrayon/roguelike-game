@@ -33,20 +33,22 @@ export const GameCanvas = () => {
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
         
-         
+        
+        const gridX = canvas.width / TILE_SIZE;
+        const gridY = canvas.height / TILE_SIZE;
+
         const start:Rectangle = {
             x : 0,
             y : 0,
-            width: canvas.width,
-            height: canvas.height
+            width: gridX,
+            height: gridY
         }
         const root = new BSPNode(start);
-        root.split(3, 200);
+        root.split(3, 12);
         var allrooms = root.getAllRooms();
 
         //create grid
-        const gridX = canvas.width / TILE_SIZE;
-        const gridY = canvas.height / TILE_SIZE;
+        
         var grid = createGrid(gridX, gridY);
         carveAllRooms(grid, allrooms);
         //grid[50][50].type = TileType.Floor;
@@ -110,10 +112,10 @@ export const GameCanvas = () => {
             if(allrooms){
                 allrooms.forEach(room => {
                     ctx.fillStyle = 'rgba(100, 100, 255, 0.0)';
-                    ctx.fillRect(room.x, room.y, room.width, room.height);
+                    ctx.fillRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height* TILE_SIZE);
                     ctx.strokeStyle = 'white';
                     ctx.lineWidth = 1;
-                    ctx.strokeRect(room.x, room.y, room.width, room.height);
+                    ctx.strokeRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height * TILE_SIZE);
                 });
             }
             if(grid){
