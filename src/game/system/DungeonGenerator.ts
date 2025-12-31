@@ -1,4 +1,6 @@
 
+import type { Tile } from './TileGrid';
+import { carveCorridor } from './TileGrid';
 export interface Rectangle {
   x: number;
   y: number;
@@ -16,7 +18,7 @@ export interface Room {
 }
 
 export enum roomType{
-  L,
+  //L,
   Rec,
 }
 
@@ -112,20 +114,25 @@ export class BSPNode{
   
     const maxWidth = this.area.width - padding * 2;
     const maxHeight = this.area.height - padding * 2;
+    const w_ratio = 0.2 + Math.random() * 0.6;
+    const h_ratio = 0.2 + Math.random() * 0.6;
+    const x = Math.floor(w_ratio  * (xPos + this.area.width))
+    const y = Math.floor(h_ratio * (yPos + this.area.height))
 
+    const r_width = Math.floor((0.2 + Math.random()* 0.9) * (maxWidth - x));
+    const r_height = Math.floor((0.2 + Math.random()* 0.9) * (maxHeight - y));
+    //
     //draw it on screen
     const room:Room = {
-        x: xPos+padding,
-        y: yPos+padding,
-        width:maxWidth,
-        height:maxHeight,
+        x: x,
+        y: y,
+        width:r_width,
+        height:r_height,
         type: randomEnum(roomType)
     }
     return room;
   };
-//   getRoom(): Room | null{
 
-//   };
   getAllRooms(): Room[]{
     if (this.room !== null) {
       return [this.room]
@@ -142,4 +149,48 @@ export class BSPNode{
     return rooms;
   };
 
+  getAllAreas(): Rectangle[]{
+    //temperaily 
+    const areas: Rectangle[] = [this.area]
+    //const areas: Rectangle[] = [];
+    
+    if(this.left !== null){
+      areas.push(...this.left.getAllAreas());
+    }
+    if(this.right !== null){
+      areas.push(...this.right.getAllAreas());
+    }
+
+    return areas;
+  };
+
+  
+  connectRooms(grid: Tile[][]): void {
+      // Only proceed if this node was split
+      if (this.left && this.right) {
+          // First, let children connect their subtrees
+          this.left.connectRooms(grid);
+          this.right.connectRooms(grid);
+          
+          // Then connect left subtree to right subtree
+          const leftRoom = this.left.getAnyRoom();
+          const rightRoom = this.right.getAnyRoom();
+          
+          if (leftRoom && rightRoom) {
+              carveCorridor(grid, leftRoom, rightRoom);
+          }
+      }
+}
+
+// Get any room from this subtree (for corridor connection)
+  getAnyRoom(): Room | null {
+      if (this.room) return this.room;
+      
+      // Prefer left, fallback to right
+      if (this.left) return this.left.getAnyRoom();
+      if (this.right) return this.right.getAnyRoom();
+      
+      return null;
+  }
+  
 }

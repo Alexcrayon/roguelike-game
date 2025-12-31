@@ -46,11 +46,15 @@ export const GameCanvas = () => {
         const root = new BSPNode(start);
         root.split(3, 12);
         var allrooms = root.getAllRooms();
+        var allareas = root.getAllAreas();
+        console.log("number of rooms: " + allrooms.length);
+        console.log("number of areas: " + allareas.length);
 
         //create grid
-        
         var grid = createGrid(gridX, gridY);
         carveAllRooms(grid, allrooms);
+        root.connectRooms(grid)
+
         //grid[50][50].type = TileType.Floor;
  
     const DebugDungeon = ({width, height, depth, minSize} : Props) =>{
@@ -88,7 +92,7 @@ export const GameCanvas = () => {
                 console.log('debug dungeon..');
             }
             //bound check
-            const PLAYER_SIZE = 32;
+            const PLAYER_SIZE = 16;
             if(playerX < 0)
                 playerX = 0;
             if(playerX > canvas.width - PLAYER_SIZE)
