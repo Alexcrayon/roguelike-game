@@ -114,21 +114,32 @@ export class BSPNode{
   
     const maxWidth = this.area.width - padding * 2;
     const maxHeight = this.area.height - padding * 2;
-    const w_ratio = 0.2 + Math.random() * 0.6;
-    const h_ratio = 0.2 + Math.random() * 0.6;
-    const x = Math.floor(w_ratio  * (xPos + this.area.width))
-    const y = Math.floor(h_ratio * (yPos + this.area.height))
 
-    const r_width = Math.floor((0.2 + Math.random()* 0.9) * (maxWidth - x));
-    const r_height = Math.floor((0.2 + Math.random()* 0.9) * (maxHeight - y));
+    const minRoomSize = 3;
+    
+
+
+    // const w_ratio = 0.2 + Math.random() * 0.6;
+    // const h_ratio = 0.2 + Math.random() * 0.6;
+    // const x = Math.floor(w_ratio  * (xPos + this.area.width))
+    // const y = Math.floor(h_ratio * (yPos + this.area.height))
+
+    //const r_width = Math.floor((0.2 + Math.random()* 0.9) * (maxWidth - xPos));
+    //const r_height = Math.floor((0.2 + Math.random()* 0.9) * (maxHeight - yPos));
+
+    const r_width = minRoomSize + Math.floor(Math.random() * (maxWidth - minRoomSize + 1));
+    const r_height = minRoomSize + Math.floor(Math.random() * (maxHeight - minRoomSize + 1));
+
+    const newX = xPos + Math.floor(Math.random() * (this.area.width - r_width))
+    const newY = yPos + Math.floor(Math.random() * (this.area.height - r_height))
     //
     //draw it on screen
     const room:Room = {
-        x: x,
-        y: y,
+        x: newX,
+        y: newY,
         width:r_width,
         height:r_height,
-        type: randomEnum(roomType)
+        type: roomType.Rec//randomEnum(roomType)
     }
     return room;
   };

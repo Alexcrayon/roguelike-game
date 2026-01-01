@@ -139,10 +139,15 @@ function carveLShapeRoom(grid:Tile[][], room:Room):void{
 export function carveCorridor(grid: Tile[][], roomA: Room, roomB: Room){
     //get center of two rooms
     //how about center of L shape room?
-    const ax = Math.floor(roomA.x + roomA.width / 2);
-    const ay = Math.floor(roomA.y + roomA.height / 2);
-    const bx = Math.floor(roomB.x + roomB.width / 2);
-    const by = Math.floor(roomB.y + roomB.height / 2);
+    
+    //const offset = [-1,0,1];
+    //const randIndx = Math.floor(Math.random() * offset.length);
+    const roomACenter = getCenterWithOffset(roomA);
+    const roomBCenter = getCenterWithOffset(roomB);
+    const ax = roomACenter[0];
+    const ay = roomACenter[1];
+    const bx = roomBCenter[0];
+    const by = roomBCenter[1];
 
     // Carve L-shape: horizontal then vertical
     for (let x = Math.min(ax, bx); x <= Math.max(ax, bx); x++) {
@@ -159,6 +164,16 @@ export function carveCorridor(grid: Tile[][], roomA: Room, roomB: Room){
 
 }
 
+function getCenterWithOffset(room : Room): number[] {
+    const offset = [-1,0,1];
+    const randIndx = Math.floor(Math.random() * offset.length);
+    const randIndx2 = Math.floor(Math.random() * offset.length);
+
+    const x = Math.floor(room.x + room.width / 2) + offset[randIndx];
+    const y = Math.floor(room.y + room.height / 2) + offset[randIndx2];
+
+    return [x,y];
+}
 export function carveAllRooms(grid: Tile[][], rooms: Room[]): void {
     rooms.forEach(room => carveRoom(grid, room));
 }
