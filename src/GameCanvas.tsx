@@ -122,6 +122,16 @@ export const GameCanvas = () => {
                     ctx.strokeRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height * TILE_SIZE);
                 });
             }
+            if(allareas){
+                allareas.forEach(room => {
+                    // ctx.fillStyle = 'rgba(100, 100, 255, 0.0)';
+                    // ctx.fillRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height* TILE_SIZE);
+                    ctx.strokeStyle = 'red';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height * TILE_SIZE);
+                });
+            }
+
             if(grid){
                 for(let i = 0; i<grid.length; i++){
                     for(let j = 0; j < grid[0].length; j++){
