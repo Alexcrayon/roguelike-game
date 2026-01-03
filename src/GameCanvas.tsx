@@ -2,6 +2,7 @@ import { useRef, use, useEffect } from "react";
 import { BSPNode } from "./game/system/DungeonGenerator";
 import type {Rectangle}  from "./game/system/DungeonGenerator";
 import { carveAllRooms, createGrid, TILE_SIZE, TileType } from "./game/system/TileGrid";
+import { dla, dlaExpand, expandRoom } from "./game/system/DLA";
 
 interface Props {
     width: number;
@@ -55,6 +56,11 @@ export const GameCanvas = () => {
         carveAllRooms(grid, allrooms);
         root.connectRooms(grid)
 
+        // allrooms.forEach(rm => {
+        //     //dla(grid,rm)
+        //     expandRoom(grid, rm, 5)
+        // });
+        dlaExpand(grid, 100);
         //grid[50][50].type = TileType.Floor;
  
     const DebugDungeon = ({width, height, depth, minSize} : Props) =>{
