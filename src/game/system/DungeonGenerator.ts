@@ -191,15 +191,28 @@ export class BSPNode{
               carveCorridor(grid, leftRoom, rightRoom);
           }
       }
+  }
+
+  connectRoomsSorted(grid: Tile[][], rooms: Room[]): void {
+    // Sort by x position
+    const sorted = [...rooms].sort((a, b) => a.x - b.x);
+    
+    // Connect each room to the previous
+    for (let i = 1; i < sorted.length; i++) {
+        carveCorridor(grid, sorted[i - 1], sorted[i]);
+    }
 }
 
 // Get any room from this subtree (for corridor connection)
   getAnyRoom(): Room | null {
-      if (this.room) return this.room;
+      if (this.room) 
+        return this.room;
       
       // Prefer left, fallback to right
-      if (this.left) return this.left.getAnyRoom();
-      if (this.right) return this.right.getAnyRoom();
+      if (this.left) 
+        return this.left.getAnyRoom();
+      if (this.right) 
+        return this.right.getAnyRoom();
       
       return null;
   }

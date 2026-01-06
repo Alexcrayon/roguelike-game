@@ -54,13 +54,13 @@ export const GameCanvas = () => {
         //create grid
         var grid = createGrid(gridX, gridY);
         carveAllRooms(grid, allrooms);
-        root.connectRooms(grid)
-
+        //root.connectRooms(grid)
+        root.connectRoomsSorted(grid, allrooms);
         // allrooms.forEach(rm => {
         //     //dla(grid,rm)
         //     expandRoom(grid, rm, 5)
-        // });
-        dlaExpand(grid, 100);
+        // }
+        dlaExpand(grid, 150);
         //grid[50][50].type = TileType.Floor;
  
     const DebugDungeon = ({width, height, depth, minSize} : Props) =>{
