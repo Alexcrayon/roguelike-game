@@ -27,8 +27,6 @@ export function randomEnum<T>(enumObj: object): T {
     return values[Math.floor(Math.random() * values.length)] as T;
 }
 
-
-
 export class BSPNode{
   private area: Rectangle ;
   private left: BSPNode | null;
@@ -43,8 +41,7 @@ export class BSPNode{
     this.room = null;
   };
   
-  // Methods
-  //area split currently is not pixel perfect to the tile system
+  //bsp spliting 
   split(depth: number, minSize: number): void{
     
      if (depth == 0 || this.area.width < minSize || this.area.height < minSize){
@@ -73,7 +70,6 @@ export class BSPNode{
             width: (this.area.x + this.area.width) - splitX,
             height: this.area.height
         } 
-
         this.left = new BSPNode(leftArea);
         this.right = new BSPNode(rightArea);
      }
@@ -105,7 +101,6 @@ export class BSPNode{
 
     this.right.split(depth, minSize);
 
-
   };
   createRoom(xPos:number, yPos:number): Room{
 
@@ -115,24 +110,22 @@ export class BSPNode{
     const maxWidth = this.area.width - padding * 2;
     const maxHeight = this.area.height - padding * 2;
 
-    const minRoomSize = 3;
+    const minRoomSize = 2;
+  
+
+    let r_width = Math.floor(Math.random() * (maxWidth));
+    //minRoomSize + Math.floor(Math.random() * (maxWidth - minRoomSize - 1));
+    let r_height = Math.floor(Math.random() * (maxHeight));
+
+    r_width = Math.max(minRoomSize, r_width);
+    r_height = Math.max(minRoomSize, r_height);
+
+    let newX = xPos + Math.floor(Math.random() * (this.area.width - r_width)) + 1;
+    let newY = yPos + Math.floor(Math.random() * (this.area.height - r_height)) + 1;
     
+    newX = Math.max(newX, padding);
+    newY = Math.max(newY, padding);
 
-
-    // const w_ratio = 0.2 + Math.random() * 0.6;
-    // const h_ratio = 0.2 + Math.random() * 0.6;
-    // const x = Math.floor(w_ratio  * (xPos + this.area.width))
-    // const y = Math.floor(h_ratio * (yPos + this.area.height))
-
-    //const r_width = Math.floor((0.2 + Math.random()* 0.9) * (maxWidth - xPos));
-    //const r_height = Math.floor((0.2 + Math.random()* 0.9) * (maxHeight - yPos));
-
-    const r_width = minRoomSize + Math.floor(Math.random() * (maxWidth - minRoomSize + 1));
-    const r_height = minRoomSize + Math.floor(Math.random() * (maxHeight - minRoomSize + 1));
-
-    const newX = xPos + Math.floor(Math.random() * (this.area.width - r_width))
-    const newY = yPos + Math.floor(Math.random() * (this.area.height - r_height))
-    //
     //draw it on screen
     const room:Room = {
         x: newX,
@@ -175,9 +168,8 @@ export class BSPNode{
     return areas;
   };
 
-  
+  //connect sibiling nodes
   connectRooms(grid: Tile[][]): void {
-      // Only proceed if this node was split
       if (this.left && this.right) {
           // First, let children connect their subtrees
           this.left.connectRooms(grid);
@@ -193,6 +185,7 @@ export class BSPNode{
       }
   }
 
+  //sort the room by x first then connect one by one
   connectRoomsSorted(grid: Tile[][], rooms: Room[]): void {
     // Sort by x position
     const sorted = [...rooms].sort((a, b) => a.x - b.x);
@@ -203,12 +196,12 @@ export class BSPNode{
     }
 }
 
-// Get any room from this subtree (for corridor connection)
+// Get any room from this subtree
   getAnyRoom(): Room | null {
       if (this.room) 
         return this.room;
       
-      // Prefer left, fallback to right
+      // left to right
       if (this.left) 
         return this.left.getAnyRoom();
       if (this.right) 
