@@ -60,7 +60,7 @@ export const GameCanvas = () => {
         //     //dla(grid,rm)
         //     expandRoom(grid, rm, 5)
         // }
-        dlaExpand(grid, 150);
+        dlaExpand(grid, 100);
         //grid[50][50].type = TileType.Floor;
  
     const DebugDungeon = ({width, height, depth, minSize} : Props) =>{
