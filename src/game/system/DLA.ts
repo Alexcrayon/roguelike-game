@@ -161,7 +161,7 @@ export function expandRoom(map: Tile[][], room: Room, targetBlocks: number) {
 // TypeScript equivalent
 export function dlaExpand(map: Tile[][], iterations: number) {
     for (let i = 0; i < iterations; i++) {
-        // Get all floor tiles
+        // Get all floor tiles, potentially not want to expand corridor
         const floorTiles: {x: number, y: number}[] = [];
         for (let y = 0; y < map.length; y++) {
             for (let x = 0; x < map[0].length; x++) {
