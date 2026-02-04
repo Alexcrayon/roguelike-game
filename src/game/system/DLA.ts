@@ -180,12 +180,18 @@ export function dlaExpand(map: Tile[][], iterations: number) {
         while (map[digger.y][digger.x].type === TileType.Floor) {
             const dir = Math.floor(Math.random() * 4);
             if (dir === 0 && digger.y > 1) digger.y--;
-            else if (dir === 1 && digger.x < map[0].length - 2) digger.x++;
-            else if (dir === 2 && digger.y < map.length - 2) digger.y++;
-            else if (dir === 3 && digger.x > 1) digger.x--;
+            else if (dir === 1 && digger.x < map[0].length - 2) 
+                digger.x++;
+            else if (dir === 2 && digger.y < map.length - 2) 
+                digger.y++;
+            else if (dir === 3 && digger.x > 1) 
+                digger.x--;
         }
         
         // Convert wall to floor
-        map[digger.y][digger.x].type = TileType.Floor;
+        
+        if(map[digger.y][digger.x].type !== TileType.Corridor){
+            map[digger.y][digger.x].type = TileType.Floor;
+        }
     }
 }

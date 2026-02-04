@@ -27,7 +27,7 @@ export function createGrid(width: number, height: number): Tile[][] {
          }
         grid.push(row)
     }
-    console.log(grid);
+    //console.log(grid);
     return grid;
 }
 
@@ -79,13 +79,13 @@ export function carveCorridor(grid: Tile[][], roomA: Room, roomB: Room){
     // could be out of bound of grid
     for (let x = Math.min(ax, bx); x <= Math.max(ax, bx); x++) {
         if (grid[ay][x].type === TileType.Wall) {
-            grid[ay][x].type = TileType.Floor;
+            grid[ay][x].type = TileType.Corridor;
         }
     }
     
     for (let y = Math.min(ay, by); y <= Math.max(ay, by); y++) {
         if (grid[y][bx].type === TileType.Wall) {
-            grid[y][bx].type = TileType.Floor;
+            grid[y][bx].type = TileType.Corridor;
         }
     }
     
