@@ -1,4 +1,5 @@
 import type { Room } from './DungeonGenerator';
+import {clamp} from './Utilities';
 
 export const TILE_SIZE = 16;
 
@@ -56,100 +57,26 @@ export function carveRoom(grid: Tile[][], room: Room): void {
     }
 }
 
-//carev L Shape Room
-function carveLShapeRoom(grid:Tile[][], room:Room):void{
-    const ratio = 0.4 + Math.random()*0.4;
-    const cornerX= Math.floor(room.width * ratio);
-    const cornerY= Math.floor(room.height * ratio);
-
-
-    //random number from 0-3
-    const corner = Math.floor(Math.random() * 4);
-
-    // do top left first for testing
-
-    switch(corner){
-        case 0:
-            for(let i = room.y; i< room.y + room.height; i++){
-                if(i < room.y + cornerY){
-                    for(let j = room.x + cornerX; j < room.x + room.width; j++){
-                        grid[i][j].type = TileType.Floor;
-                    }
-                }
-                else{
-                    for(let j = room.x; j < room.x + room.width; j++){
-                        grid[i][j].type = TileType.Floor;
-                    }
-                }
-            }
-            break;
-        case 1:
-             // top right
-            for(let i = room.y; i< room.y + room.height; i++){
-                if(i < room.y + cornerY){
-                    for(let j = room.x; j < room.x + room.width - cornerX; j++){
-                        grid[i][j].type = TileType.Floor;
-                    }
-                }
-                else{
-                    for(let j = room.x; j < room.x + room.width; j++){
-                        grid[i][j].type = TileType.Floor;
-                    }
-                }
-            }
-            break;
-
-        case 2:
-             //bot left
-            for(let i = room.y; i< room.y + room.height; i++){
-                if(i < room.y + cornerY){
-                    for(let j = room.x; j < room.x + room.width; j++){
-                        grid[i][j].type = TileType.Floor;
-                    }
-                    
-                }
-                else{
-                    for(let j = room.x + cornerX; j < room.x + room.width; j++){
-                        grid[i][j].type = TileType.Floor;
-                    }
-                }
-            }
-            break;
-
-        case 3:
-            // bot right
-            for(let i = room.y; i< room.y + room.height; i++){
-                if(i < room.y + cornerY){
-                    for(let j = room.x; j < room.x + room.width; j++){
-                        grid[i][j].type = TileType.Floor;
-                    }
-                }
-                else{
-                    for(let j = room.x; j < room.x + room.width - cornerX; j++){
-                        grid[i][j].type = TileType.Floor;
-                    }
-                }
-            }
-            break;
-    }
-
-    
-}   
-
 export function carveCorridor(grid: Tile[][], roomA: Room, roomB: Room){
     //get center of two rooms
-    //how about center of L shape room?
-    
-    //const offset = [-1,0,1];
-    //const randIndx = Math.floor(Math.random() * offset.length);
     const roomACenter = getCenterWithOffset(roomA);
     const roomBCenter = getCenterWithOffset(roomB);
-    const ax = roomACenter[0];
-    const ay = roomACenter[1];
-    const bx = roomBCenter[0];
-    const by = roomBCenter[1];
+    
+    
+    const ax = clamp(roomACenter[0], 0, 39);
+    const ay = clamp(roomACenter[1], 0, 29);
+    const bx = clamp(roomBCenter[0], 0, 39);
+    const by = clamp(roomBCenter[1], 0, 29);
+    //console.log([grid.length, grid[0].length]);
 
+
+    if(ay >= grid.length || ax >= grid[0].length 
+        || by >= grid.length || bx >= grid[0].length
+    ){
+        console.log("room center is out of boundary of grid");
+    }
     // Carve L-shape: horizontal then vertical
+    // could be out of bound of grid
     for (let x = Math.min(ax, bx); x <= Math.max(ax, bx); x++) {
         if (grid[ay][x].type === TileType.Wall) {
             grid[ay][x].type = TileType.Floor;
@@ -161,7 +88,7 @@ export function carveCorridor(grid: Tile[][], roomA: Room, roomB: Room){
             grid[y][bx].type = TileType.Floor;
         }
     }
-
+    
 }
 
 function getCenterWithOffset(room : Room): number[] {

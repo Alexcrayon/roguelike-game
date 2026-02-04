@@ -191,8 +191,8 @@ export class BSPNode{
     const sorted = [...rooms].sort((a, b) => a.x - b.x);
     
     // Connect each room to the previous
-    for (let i = 1; i < sorted.length; i++) {
-        carveCorridor(grid, sorted[i - 1], sorted[i]);
+    for (let i = 0; i < sorted.length-1; i++) {
+        carveCorridor(grid, sorted[i], sorted[i+1]);
     }
 }
 
