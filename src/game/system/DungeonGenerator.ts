@@ -102,29 +102,37 @@ export class BSPNode{
     this.right.split(depth, minSize);
 
   };
+
   createRoom(xPos:number, yPos:number): Room{
 
-    const padding = 1;  // tiles of wall/corridor space
-    //const minRoomSize = 4;
-  
-    const maxWidth = this.area.width - padding * 2;
-    const maxHeight = this.area.height - padding * 2;
-
+    const padding = 1;
     const minRoomSize = 2;
-  
-
-    let r_width = Math.floor(Math.random() * (maxWidth));
-    //minRoomSize + Math.floor(Math.random() * (maxWidth - minRoomSize - 1));
-    let r_height = Math.floor(Math.random() * (maxHeight));
-
+    
+    // Valid room placement area
+    const validMinX = xPos + padding;
+    const validMinY = yPos + padding;
+    const validMaxWidth = this.area.width - padding * 2;
+    const validMaxHeight = this.area.height - padding * 2;
+    
+    // Random room size within valid area
+    let r_width = Math.floor(Math.random() * validMaxWidth);
+    let r_height = Math.floor(Math.random() * validMaxHeight);
     r_width = Math.max(minRoomSize, r_width);
     r_height = Math.max(minRoomSize, r_height);
-
-    let newX = xPos + Math.floor(Math.random() * (this.area.width - r_width)) + 1;
-    let newY = yPos + Math.floor(Math.random() * (this.area.height - r_height)) + 1;
     
-    newX = Math.max(newX, padding);
-    newY = Math.max(newY, padding);
+    // Random position - room must fit entirely within valid area
+    const availableX = validMaxWidth - r_width;
+    const availableY = validMaxHeight - r_height;
+    
+    const newX = validMinX + Math.floor(Math.random() * (availableX + 1));
+    const newY = validMinY + Math.floor(Math.random() * (availableY + 1));
+
+    // if(newX + r_width >= this.area.x + this.area.width - 1){
+    //   console.log("room is touching right bound");
+    // }
+    // if(newY + r_height >= this.area.y + this.area.height - 1){
+    //   console.log("room is touching bot bound");
+    // }
 
     //draw it on screen
     const room:Room = {
