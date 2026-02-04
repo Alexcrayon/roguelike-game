@@ -152,6 +152,11 @@ export const GameCanvas = () => {
                             ctx.fillStyle = 'rgba(220, 136, 136, 0.5)';
                             ctx.fillRect(j*16,i*16,16,16);
                         }
+                        else if(grid[i][j].type == TileType.Corridor){
+                            ctx.fillStyle = 'rgba(255, 0, 136, 0.5)';
+                            ctx.fillRect(j*16,i*16,16,16);
+                        }
+
                     }
                 }
             }
@@ -183,7 +188,7 @@ export const GameCanvas = () => {
             padding: '20px'
              }}>
             <h1 style={{ color: 'white', fontSize: '32px', marginBottom: '20px' }}>
-                Canvas Game
+                Random Dungeon Generator
             </h1>
             <canvas ref ={canvasRef} width={640} height={480} />
         
