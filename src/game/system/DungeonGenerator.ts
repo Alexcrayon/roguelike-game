@@ -194,15 +194,27 @@ export class BSPNode{
   }
 
   //sort the room by x first then connect one by one
-  connectRoomsSorted(grid: Tile[][], rooms: Room[]): void {
+  connectRoomsSortedX(grid: Tile[][], rooms: Room[]): void {
     // Sort by x position
     const sorted = [...rooms].sort((a, b) => a.x - b.x);
-    
+    //add sort by y also
+
     // Connect each room to the previous
     for (let i = 0; i < sorted.length-1; i++) {
         carveCorridor(grid, sorted[i], sorted[i+1]);
     }
-}
+  }
+
+   //sort the room by x first then connect one by one
+  connectRoomsSortedY(grid: Tile[][], rooms: Room[]): void {
+    // Sort by y position
+    const sorted = [...rooms].sort((a, b) => a.y - b.y);
+
+    // Connect each room to the previous
+    for (let i = 0; i < sorted.length-1; i++) {
+        carveCorridor(grid, sorted[i], sorted[i+1]);
+    }
+  }
 
 // Get any room from this subtree
   getAnyRoom(): Room | null {
