@@ -27,9 +27,18 @@ export const GameCanvas = () => {
         let playerY= 100;
         let movement = 2;
         const keys: { [key: string]: boolean } = {};
-        const handleKeyDown = (e: KeyboardEvent) => { keys[e.key] = true; };
-        const handleKeyUp = (e: KeyboardEvent) => { keys[e.key] = false; };
-    
+
+        const prevKeys :{ [key: string]: boolean } = {};
+        const handleKeyDown = (e: KeyboardEvent) => { 
+            keys[e.key] = true; 
+            //prevKeys[e.key] = true;
+          
+        };
+        const handleKeyUp = (e: KeyboardEvent) => { 
+            keys[e.key] = false; 
+            //prevKeys[e.key] = false;
+        };
+        
         
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
@@ -55,25 +64,26 @@ export const GameCanvas = () => {
         var grid = createGrid(gridX, gridY);
         carveAllRooms(grid, allrooms);
         //root.connectRooms(grid)
-        root.connectRoomsSorted(grid, allrooms);
+        root.connectRoomsSortedY(grid, allrooms);
         // allrooms.forEach(rm => {
         //     //dla(grid,rm)
         //     expandRoom(grid, rm, 5)
         // }
         dlaExpand(grid, 100);
         //grid[50][50].type = TileType.Floor;
- 
-    const DebugDungeon = ({width, height, depth, minSize} : Props) =>{
-        const start:Rectangle = {
-                x : 0,
-                y : 0,
-                width: width,
-                height: height
-            }
-            const root = new BSPNode(start);
-            root.split(depth, minSize);
-            const allrooms = root.getAllRooms();
-        return allrooms;
+        
+        let debugMode = false;
+        const DebugDungeon = ({width, height, depth, minSize} : Props) =>{
+            const start:Rectangle = {
+                    x : 0,
+                    y : 0,
+                    width: width,
+                    height: height
+                }
+                const root = new BSPNode(start);
+                root.split(depth, minSize);
+                const allrooms = root.getAllRooms();
+                return allrooms;
     }
     
 
@@ -87,16 +97,26 @@ export const GameCanvas = () => {
            
 
             //const allrooms = null;
-            if (keys[' ']){
-                const prop: Props = {
-                    width: canvas.width,
-                    height: canvas.height,
-                    depth: 3,
-                    minSize: 200
-                };
-                allrooms = DebugDungeon(prop);
-                console.log('debug dungeon..');
+            if (keys[' '] && !prevKeys[' '] ){
+                // const prop: Props = {
+                //     width: canvas.width,
+                //     height: canvas.height,
+                //     depth: 3,
+                //     minSize: 200
+                // };
+                // allrooms = DebugDungeon(prop);
+                // console.log('debug dungeon..');
+                
+                // if(debugMode === false)
+                //     debugMode = true;
+                // else
+                //     debugMode = false;
+
+                debugMode = !debugMode;
+                console.log('Debug mode:', debugMode);
             }
+
+
             //bound check
             const PLAYER_SIZE = 16;
             if(playerX < 0)
@@ -142,8 +162,6 @@ export const GameCanvas = () => {
                 for(let i = 0; i<grid.length; i++){
                     for(let j = 0; j < grid[0].length; j++){
 
-
-
                         if(grid[i][j].type == TileType.Wall){
                             ctx.fillStyle = 'rgba(25, 168, 0, 0.6)';
                             ctx.fillRect(j*16,i*16,16,16);
@@ -152,9 +170,15 @@ export const GameCanvas = () => {
                             ctx.fillStyle = 'rgba(220, 136, 136, 0.5)';
                             ctx.fillRect(j*16,i*16,16,16);
                         }
-                        else if(grid[i][j].type == TileType.Corridor){
-                            ctx.fillStyle = 'rgba(255, 0, 136, 0.5)';
-                            ctx.fillRect(j*16,i*16,16,16);
+                        else if(grid[i][j].type == TileType.Corridor ){
+                            if( debugMode === true){
+                                ctx.fillStyle = 'rgba(255, 0, 136, 0.5)';
+                                ctx.fillRect(j*16,i*16,16,16);
+                            }
+                            else{
+                                ctx.fillStyle = 'rgba(220, 136, 136, 0.5)';
+                                ctx.fillRect(j*16,i*16,16,16);
+                            }
                         }
 
                     }
@@ -162,7 +186,9 @@ export const GameCanvas = () => {
             }
 
            
-            
+            for (const key in keys) {
+                prevKeys[key] = keys[key];
+            }
 
             requestAnimationFrame(gameloop);
     };
