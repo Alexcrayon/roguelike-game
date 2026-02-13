@@ -15,6 +15,100 @@ interface Props {
 
 export const GameCanvas = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    let debugMode = false;
+    const generateDungeon = () => {
+        console.log("generating dungeon");
+        const canvas = canvasRef.current;
+        if(!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        if(!ctx) return;
+
+        //clear the canvas first
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const gridX = canvas.width / TILE_SIZE;
+        const gridY = canvas.height / TILE_SIZE;
+
+        const start:Rectangle = {
+            x : 0,
+            y : 0,
+            width: gridX,
+            height: gridY
+        }
+        const root = new BSPNode(start);
+        root.split(3, 12);
+        var allrooms = root.getAllRooms();
+        var allareas = root.getAllAreas();
+        console.log("number of rooms: " + allrooms.length);
+        console.log("number of areas: " + allareas.length);
+
+        //create grid
+        var grid = createGrid(gridX, gridY);
+        carveAllRooms(grid, allrooms);
+        //root.connectRooms(grid)
+        root.connectRoomsSortedY(grid, allrooms);
+        // allrooms.forEach(rm => {
+        //     //dla(grid,rm)
+        //     expandRoom(grid, rm, 5)
+        // }
+        dlaExpand(grid, 100);
+
+        
+         // Draw rooms using canvas API
+        if(allrooms){
+            allrooms.forEach(room => {
+                ctx.fillStyle = 'rgba(100, 100, 255, 0.0)';
+                ctx.fillRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height* TILE_SIZE);
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height * TILE_SIZE);
+            });
+        }
+        if(allareas){
+            allareas.forEach(room => {
+                // ctx.fillStyle = 'rgba(100, 100, 255, 0.0)';
+                // ctx.fillRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height* TILE_SIZE);
+                ctx.strokeStyle = 'red';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height * TILE_SIZE);
+            });
+        }
+
+        if(grid){
+            for(let i = 0; i<grid.length; i++){
+                for(let j = 0; j < grid[0].length; j++){
+
+                    if(grid[i][j].type == TileType.Wall){
+                        ctx.fillStyle = 'rgba(25, 168, 0, 0.6)';
+                        ctx.fillRect(j*16,i*16,16,16);
+                    }
+                    else if(grid[i][j].type == TileType.Floor){
+                        ctx.fillStyle = 'rgba(220, 136, 136, 0.5)';
+                        ctx.fillRect(j*16,i*16,16,16);
+                    }
+                    else if(grid[i][j].type == TileType.Corridor ){
+                        if( debugMode === true){
+                            ctx.fillStyle = 'rgba(255, 0, 136, 0.5)';
+                            ctx.fillRect(j*16,i*16,16,16);
+                        }
+                        else{
+                            ctx.fillStyle = 'rgba(220, 136, 136, 0.5)';
+                            ctx.fillRect(j*16,i*16,16,16);
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    const debug = () =>{
+
+        debugMode = !debugMode;
+        console.log('Debug mode:', debugMode);
+
+    }
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -44,52 +138,19 @@ export const GameCanvas = () => {
         window.addEventListener('keyup', handleKeyUp);
         
         
-        const gridX = canvas.width / TILE_SIZE;
-        const gridY = canvas.height / TILE_SIZE;
-
-        const start:Rectangle = {
-            x : 0,
-            y : 0,
-            width: gridX,
-            height: gridY
-        }
-        const root = new BSPNode(start);
-        root.split(3, 12);
-        var allrooms = root.getAllRooms();
-        var allareas = root.getAllAreas();
-        console.log("number of rooms: " + allrooms.length);
-        console.log("number of areas: " + allareas.length);
-
-        //create grid
-        var grid = createGrid(gridX, gridY);
-        carveAllRooms(grid, allrooms);
-        //root.connectRooms(grid)
-        root.connectRoomsSortedY(grid, allrooms);
-        // allrooms.forEach(rm => {
-        //     //dla(grid,rm)
-        //     expandRoom(grid, rm, 5)
-        // }
-        dlaExpand(grid, 100);
+       
         //grid[50][50].type = TileType.Floor;
         
-        let debugMode = false;
-        const DebugDungeon = ({width, height, depth, minSize} : Props) =>{
-            const start:Rectangle = {
-                    x : 0,
-                    y : 0,
-                    width: width,
-                    height: height
-                }
-                const root = new BSPNode(start);
-                root.split(depth, minSize);
-                const allrooms = root.getAllRooms();
-                return allrooms;
-    }
+       generateDungeon();
+
+  
     
+    
+   
 
     const gameloop = () =>{
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            //clearing the canvas
+            //
             if (keys['ArrowUp'] || keys['w']) playerY -= movement;
             if (keys['ArrowDown'] || keys['s']) playerY += movement;
             if (keys['ArrowLeft'] || keys['a']) playerX -= movement;
@@ -112,8 +173,7 @@ export const GameCanvas = () => {
                 // else
                 //     debugMode = false;
 
-                debugMode = !debugMode;
-                console.log('Debug mode:', debugMode);
+               
             }
 
 
@@ -138,52 +198,7 @@ export const GameCanvas = () => {
             ctx.strokeRect(0, 0, canvas.width, canvas.height);
             
 
-             // Draw rooms using canvas API
-            if(allrooms){
-                allrooms.forEach(room => {
-                    ctx.fillStyle = 'rgba(100, 100, 255, 0.0)';
-                    ctx.fillRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height* TILE_SIZE);
-                    ctx.strokeStyle = 'white';
-                    ctx.lineWidth = 1;
-                    ctx.strokeRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height * TILE_SIZE);
-                });
-            }
-            if(allareas){
-                allareas.forEach(room => {
-                    // ctx.fillStyle = 'rgba(100, 100, 255, 0.0)';
-                    // ctx.fillRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height* TILE_SIZE);
-                    ctx.strokeStyle = 'red';
-                    ctx.lineWidth = 1;
-                    ctx.strokeRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height * TILE_SIZE);
-                });
-            }
-
-            if(grid){
-                for(let i = 0; i<grid.length; i++){
-                    for(let j = 0; j < grid[0].length; j++){
-
-                        if(grid[i][j].type == TileType.Wall){
-                            ctx.fillStyle = 'rgba(25, 168, 0, 0.6)';
-                            ctx.fillRect(j*16,i*16,16,16);
-                        }
-                        else if(grid[i][j].type == TileType.Floor){
-                            ctx.fillStyle = 'rgba(220, 136, 136, 0.5)';
-                            ctx.fillRect(j*16,i*16,16,16);
-                        }
-                        else if(grid[i][j].type == TileType.Corridor ){
-                            if( debugMode === true){
-                                ctx.fillStyle = 'rgba(255, 0, 136, 0.5)';
-                                ctx.fillRect(j*16,i*16,16,16);
-                            }
-                            else{
-                                ctx.fillStyle = 'rgba(220, 136, 136, 0.5)';
-                                ctx.fillRect(j*16,i*16,16,16);
-                            }
-                        }
-
-                    }
-                }
-            }
+            
 
            
             for (const key in keys) {
@@ -216,6 +231,40 @@ export const GameCanvas = () => {
             <h1 style={{ color: 'white', fontSize: '32px', marginBottom: '20px' }}>
                 Random Dungeon Generator
             </h1>
+
+
+            <div style={{ marginBottom: '10px' }}>
+                <button 
+                    onClick={generateDungeon}
+                    style={{
+                        padding: '10px 20px',
+                        fontSize: '16px',
+                        cursor: 'pointer',
+                        backgroundColor: '#4a4a8a',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '5px',
+                        marginRight: '10px'
+                    }}
+                >
+                    Generate New
+                </button>
+                
+                <button 
+                    onClick={() => debug}
+                    style={{
+                        padding: '10px 20px',
+                        fontSize: '16px',
+                        cursor: 'pointer',
+                        backgroundColor: '#4a4a8a',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '5px'
+                    }}
+                >
+                    Toggle Debug
+                </button>
+            </div>
             <canvas ref ={canvasRef} width={640} height={480} />
         
         </div>;
