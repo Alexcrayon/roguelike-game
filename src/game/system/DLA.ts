@@ -48,7 +48,7 @@ export function dla(map: Tile[][], room: Room) {
             } else if (builderMoveDirection == 2 && cy < room.y + room.height - 1) {
                 cy++; stepped++;  // South
             } else if (builderMoveDirection == 3 && cx > room.x) {
-                cx--; stepped++;  // West - FIXED: was cx++
+                cx--; stepped++;  // West 
             }
             
             // Check bounds and step limit
