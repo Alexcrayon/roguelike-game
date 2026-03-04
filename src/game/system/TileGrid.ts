@@ -94,14 +94,29 @@ export function carveCorridor(grid: Tile[][], roomA: Room, roomB: Room){
 }
 
 function getCenterWithOffset(room : Room): number[] {
-    const offset = [-1,0,1];
-    const randIndx = Math.floor(Math.random() * offset.length);
-    const randIndx2 = Math.floor(Math.random() * offset.length);
+    //room.width
 
-    const x = Math.floor(room.x + room.width / 2) + offset[randIndx];
-    const y = Math.floor(room.y + room.height / 2) + offset[randIndx2];
+    const offset_w = findOffsetRange(room.width);
+    const offset_h = findOffsetRange(room.height);
+
+    const randIndx = Math.floor(Math.random() * offset_w.length);
+    const randIndx2 = Math.floor(Math.random() * offset_h.length);
+
+    const x = Math.floor(room.x + room.width / 2) + offset_w[randIndx];
+    const y = Math.floor(room.y + room.height / 2) + offset_h[randIndx2];
 
     return [x,y];
+}
+
+function findOffsetRange(size:number): number[]{
+    let range = [];
+    for(let i = -Math.floor(size/2); i<0; i++){
+        range.push(i);
+    }
+    for(let i = 0; i < Math.floor(size/2); i++){
+        range.push(i);
+    }
+    return range;
 }
 export function carveAllRooms(grid: Tile[][], rooms: Room[]): void {
     rooms.forEach(room => carveRoom(grid, room));
