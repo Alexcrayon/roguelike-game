@@ -62,11 +62,13 @@ export function carveCorridor(grid: Tile[][], roomA: Room, roomB: Room){
     const roomACenter = getCenterWithOffset(roomA);
     const roomBCenter = getCenterWithOffset(roomB);
     
+    const width = grid[0].length;
+    const height = grid.length;
     
-    const ax = clamp(roomACenter[0], 0, 39);
-    const ay = clamp(roomACenter[1], 0, 29);
-    const bx = clamp(roomBCenter[0], 0, 39);
-    const by = clamp(roomBCenter[1], 0, 29);
+    const ax = clamp(roomACenter[0], 0, width-1);
+    const ay = clamp(roomACenter[1], 0, height-1);
+    const bx = clamp(roomBCenter[0], 0, width-1);
+    const by = clamp(roomBCenter[1], 0, height-1);
     //console.log([grid.length, grid[0].length]);
 
 

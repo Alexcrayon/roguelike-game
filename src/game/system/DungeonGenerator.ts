@@ -1,6 +1,6 @@
-
 import type { Tile } from './TileGrid';
 import { carveCorridor } from './TileGrid';
+import { clamp } from './Utilities';
 export interface Rectangle {
   x: number;
   y: number;
@@ -104,45 +104,47 @@ export class BSPNode{
   };
 
   createRoom(xPos:number, yPos:number): Room{
-
     const padding = 1;
-    const minRoomSize = 2;
+    const minRoomSize = 4;
+    const maxAspectRatio = 3;
     
-    // Valid room placement area
-    const validMinX = xPos + padding;
-    const validMinY = yPos + padding;
     const validMaxWidth = this.area.width - padding * 2;
     const validMaxHeight = this.area.height - padding * 2;
     
-    // Random room size within valid area
-    let r_width = Math.floor(Math.random() * validMaxWidth);
-    let r_height = Math.floor(Math.random() * validMaxHeight);
-    r_width = Math.max(minRoomSize, r_width);
-    r_height = Math.max(minRoomSize, r_height);
+    // Actual min can't exceed max
+    const minW = Math.min(minRoomSize, validMaxWidth);
+    const minH = Math.min(minRoomSize, validMaxHeight);
     
-    // Random position - room must fit entirely within valid area
-    const availableX = validMaxWidth - r_width;
-    const availableY = validMaxHeight - r_height;
+    // Generate random size directly in valid range (minW to validMaxWidth)
+    let r_width = minW + Math.floor(Math.random() * (validMaxWidth - minW + 1));
+    let r_height = minH + Math.floor(Math.random() * (validMaxHeight - minH + 1));
     
-    const newX = validMinX + Math.floor(Math.random() * (availableX + 1));
-    const newY = validMinY + Math.floor(Math.random() * (availableY + 1));
-
-    // if(newX + r_width >= this.area.x + this.area.width - 1){
-    //   console.log("room is touching right bound");
-    // }
-    // if(newY + r_height >= this.area.y + this.area.height - 1){
-    //   console.log("room is touching bot bound");
-    // }
-
-    //draw it on screen
-    const room:Room = {
+    // Enforce aspect ratio (shrink the larger dimension)
+    const currentRatio = r_width / r_height;
+    if (currentRatio > maxAspectRatio) {
+        // Too wide, shrink width
+        r_width = Math.floor(r_height * maxAspectRatio);
+        r_width = Math.max(minW, r_width);  // Don't go below min
+    } else if (currentRatio < 1 / maxAspectRatio) {
+        // Too tall, shrink height
+        r_height = Math.floor(r_width * maxAspectRatio);
+        r_height = Math.max(minH, r_height);  // Don't go below min
+    }
+    
+    // Calculate position
+    const availableX = Math.max(0, validMaxWidth - r_width);
+    const availableY = Math.max(0, validMaxHeight - r_height);
+    
+    const newX = this.area.x + padding + Math.floor(Math.random() * (availableX + 1));
+    const newY = this.area.y + padding + Math.floor(Math.random() * (availableY + 1));
+    
+    return {
         x: newX,
         y: newY,
-        width:r_width,
-        height:r_height,
-        type: roomType.Rec//randomEnum(roomType)
-    }
-    return room;
+        width: r_width,
+        height: r_height,
+        type: roomType.Rec
+    };
   };
 
   getAllRooms(): Room[]{
