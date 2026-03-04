@@ -1,6 +1,6 @@
 import type { Tile } from './TileGrid';
 import { carveCorridor } from './TileGrid';
-import { clamp } from './Utilities';
+import { clamp, mulberry32 } from './Utilities';
 export interface Rectangle {
   x: number;
   y: number;
@@ -32,30 +32,42 @@ export class BSPNode{
   private left: BSPNode | null;
   private right: BSPNode | null;
   private room: Room | null;
-  
+  private rand: ()=>number;
+  //private seed:number;
+
+  //constructor(area: Rectangle);
+  constructor(area: Rectangle, rand?: ()=>number);
+
   // Constructor
-  constructor(area: Rectangle){
+  constructor(area: Rectangle, rand?: ()=>number){
     this.area = area;
     this.left = null;
     this.right = null;
     this.room = null;
-  };
+
+    this.rand = rand ?? mulberry32(Date.now());
+    // if (seed !== undefined) {
+    //   this.rand = mulberry32(seed);
+    //   //this.seed = seed;
+    // }
+  }
+
   
   //bsp spliting 
   split(depth: number, minSize: number): void{
-    
+
      if (depth == 0 || this.area.width < minSize || this.area.height < minSize){
 
         this.room = this.createRoom(this.area.x, this.area.y);
         return;
      }
 
-     const rand: number = Math.random();
+     const rand: number = this.rand();
      if(rand > 0.5){
         //split vertically
         //create two room horizontally
         // 0.3 0.4 0.5 
-        const ratio = 0.3 + Math.random()*0.4;
+        const ratio = 0.3 + this.rand() *0.4;
         const splitX = this.area.x + Math.floor(this.area.width * ratio);
         const leftArea: Rectangle = {
             x : this.area.x,
@@ -70,13 +82,13 @@ export class BSPNode{
             width: (this.area.x + this.area.width) - splitX,
             height: this.area.height
         } 
-        this.left = new BSPNode(leftArea);
-        this.right = new BSPNode(rightArea);
+        this.left = new BSPNode(leftArea, this.rand);
+        this.right = new BSPNode(rightArea, this.rand);
      }
      else
      {
         //split horizontally
-        const ratio = 0.3 + Math.random()*0.4;
+        const ratio = 0.3 + this.rand()*0.4;
         //const splitX = this.area.x + this.area.width * ratio;
         const splitY = this.area.y + Math.floor(this.area.height * ratio);
         const topArea: Rectangle = {
@@ -93,8 +105,8 @@ export class BSPNode{
             height: (this.area.y + this.area.height) - splitY
         } 
 
-        this.left = new BSPNode(topArea);
-        this.right = new BSPNode(botArea);
+        this.left = new BSPNode(topArea, this.rand);
+        this.right = new BSPNode(botArea, this.rand);
      }
     depth--;
     this.left.split(depth, minSize);
@@ -116,8 +128,8 @@ export class BSPNode{
     const minH = Math.min(minRoomSize, validMaxHeight);
     
     // Generate random size directly in valid range (minW to validMaxWidth)
-    let r_width = minW + Math.floor(Math.random() * (validMaxWidth - minW + 1));
-    let r_height = minH + Math.floor(Math.random() * (validMaxHeight - minH + 1));
+    let r_width = minW + Math.floor(this.rand()* (validMaxWidth - minW + 1));
+    let r_height = minH + Math.floor(this.rand() * (validMaxHeight - minH + 1));
     
     // Enforce aspect ratio (shrink the larger dimension)
     const currentRatio = r_width / r_height;
@@ -135,8 +147,8 @@ export class BSPNode{
     const availableX = Math.max(0, validMaxWidth - r_width);
     const availableY = Math.max(0, validMaxHeight - r_height);
     
-    const newX = this.area.x + padding + Math.floor(Math.random() * (availableX + 1));
-    const newY = this.area.y + padding + Math.floor(Math.random() * (availableY + 1));
+    const newX = this.area.x + padding + Math.floor(this.rand() * (availableX + 1));
+    const newY = this.area.y + padding + Math.floor(this.rand() * (availableY + 1));
     
     return {
         x: newX,

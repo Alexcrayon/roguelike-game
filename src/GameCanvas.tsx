@@ -4,6 +4,7 @@ import type {Rectangle,Room}  from "./game/system/DungeonGenerator";
 import type { Tile } from "./game/system/TileGrid";
 import { carveAllRooms, createGrid, TILE_SIZE, TileType } from "./game/system/TileGrid";
 import { dla, dlaExpand, expandRoom } from "./game/system/DLA";
+import { mulberry32 } from "./game/system/Utilities";
 
 interface Props {
     width: number;
@@ -50,7 +51,9 @@ export const GameCanvas = () => {
             width: gridX,
             height: gridY
         }
-        const root = new BSPNode(start);
+
+        const rand = mulberry32(12345);
+        const root = new BSPNode(start, rand);
        
 
         root.split(6, 12);
