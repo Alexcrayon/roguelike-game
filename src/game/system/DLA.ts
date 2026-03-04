@@ -2,6 +2,7 @@
 import type { Room } from "./DungeonGenerator";
 import { TileType, type Tile } from "./TileGrid";
 
+//dla version from roguebasin
 export function dla(map: Tile[][], room: Room) {
     let builderSpawned = 0;
     let builderMoveDirection = 0;
@@ -95,6 +96,7 @@ export function dla(map: Tile[][], room: Room) {
     }
 }
 
+
 export function expandRoom(map: Tile[][], room: Room, targetBlocks: number) {
     let allocatedBlocks = 0;
     let maxIterations = 50000;
@@ -158,7 +160,7 @@ export function expandRoom(map: Tile[][], room: Room, targetBlocks: number) {
     console.log("Expansion finished. Blocks added:", allocatedBlocks);
 }
 
-// TypeScript equivalent
+// a simpler version 
 export function dlaExpand(map: Tile[][], iterations: number) {
     for (let i = 0; i < iterations; i++) {
         // Get all floor tiles, potentially not want to expand corridor
