@@ -1,73 +1,31 @@
-# React + TypeScript + Vite
+# Procedural Dungeon Generator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A browser-based procedural dungeon generator built with React, TypeScript, and HTML5 Canvas. Generates randomized dungeon layouts using Binary Space Partitioning (BSP) with seeded pseudo-random number generation for reproducible results.
 
-Currently, two official plugins are available:
+![Dungeon Generator Screenshot](./screenshot.png)
+<!-- Replace with an actual screenshot or GIF of your generator -->
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Techniques
 
-## React Compiler
+- **BSP Tree Splitting** — Recursively partitions space into regions, then places rooms within each leaf node with configurable padding and aspect ratio constraints
+- **Seeded PRNG (Mulberry32)** — Deterministic random number generation ensures the same seed always produces the same dungeon layout
+- **Sorted Corridor Connection** — Rooms are connected sequentially by position to guarantee full connectivity
+- **Diffusion-Limited Aggregation (DLA)** — Expands room boundaries organically for more natural-looking cave structures
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Getting Started
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone 
+cd dungeon-generator
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The app will be available at `http://localhost:xxxx`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Usage
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- **Generate New** — Creates a new dungeon with a random seed
+- **Seed Input** — Enter a specific seed number to reproduce a dungeon layout
+- **Toggle Debug** — Visualizes corridors in a distinct color and displays BSP partition boundaries
+
