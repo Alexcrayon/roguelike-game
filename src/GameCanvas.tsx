@@ -25,6 +25,7 @@ export const GameCanvas = () => {
     const [rooms, setRooms] = useState<Room[]>([]);
     const [areas, setAreas] = useState<Rectangle[]>([]);
     const [debugMode, setDebug] = useState<boolean>(false);
+    const [seed, setSeed] = useState<number>(Date.now());
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     //let debugMode = false;
@@ -42,6 +43,7 @@ export const GameCanvas = () => {
         //clear the canvas first
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+
         const gridX = canvas.width / TILE_SIZE;
         const gridY = canvas.height / TILE_SIZE;
 
@@ -52,7 +54,10 @@ export const GameCanvas = () => {
             height: gridY
         }
 
-        const rand = mulberry32(12345);
+        const newSeed = Date.now();   // or Math.floor(Math.random() * 999999)
+        setSeed(newSeed);
+
+        const rand = mulberry32(newSeed);
         const root = new BSPNode(start, rand);
        
 
@@ -94,20 +99,22 @@ export const GameCanvas = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         if(allrooms){
-            allrooms.forEach(room => {
-                ctx.fillStyle = 'rgba(100, 100, 255, 0.0)';
-                ctx.fillRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height* TILE_SIZE);
-                ctx.strokeStyle = 'white';
-                ctx.lineWidth = 1;
-                ctx.strokeRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height * TILE_SIZE);
-            });
+            if( debugMode === true){
+               allrooms.forEach(room => {
+                    ctx.fillStyle = 'rgba(100, 100, 255, 0.0)';
+                    ctx.fillRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height* TILE_SIZE);
+                    ctx.strokeStyle = 'white';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height * TILE_SIZE);
+                });
+            }
         }
         if(allareas){
             if( debugMode === true){
                 allareas.forEach(room => {
-                    // ctx.fillStyle = 'rgba(100, 100, 255, 0.0)';
+                    //ctx.fillStyle = 'rgba(0, 0, 0, 0)';
                     // ctx.fillRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height* TILE_SIZE);
-                    ctx.strokeStyle = 'red';
+                    ctx.strokeStyle = 'black';
                     ctx.lineWidth = 1;
                     ctx.strokeRect(room.x * TILE_SIZE, room.y * TILE_SIZE, room.width * TILE_SIZE, room.height * TILE_SIZE);
                 });
@@ -119,7 +126,7 @@ export const GameCanvas = () => {
                 for(let j = 0; j < grid[0].length; j++){
 
                     if(grid[i][j].type == TileType.Wall){
-                        ctx.fillStyle = 'rgba(25, 168, 0, 0.6)';
+                        ctx.fillStyle = '#312c5bac';
                         ctx.fillRect(j*TILE_SIZE,i*TILE_SIZE,TILE_SIZE,TILE_SIZE);
                     }
                     else if(grid[i][j].type == TileType.Floor){
@@ -293,6 +300,25 @@ export const GameCanvas = () => {
 
 
             <div style={{ marginBottom: '10px' }}>
+                <label style={{ color: 'white', fontSize: '16px', marginRight: '10px' }}>
+                    Seed: 
+                </label>
+                <input 
+                    type="text" 
+                    //value={12345} 
+                    value={seed} 
+                    onChange={(e) => setSeed(Number(e.target.value))} 
+                    style={{
+                        padding: '10px 20px',
+                        fontSize: '16px',
+                        backgroundColor: '#4a4a8a',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '5px',
+                        marginRight: '10px',
+                        width: '175px'
+    }}
+                />
                 <button 
                     onClick={generateDungeon}
                     style={{
