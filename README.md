@@ -2,7 +2,7 @@
 
 A browser-based procedural dungeon generator built with React, TypeScript, and HTML5 Canvas. Generates randomized dungeon layouts using Binary Space Partitioning (BSP) with seeded pseudo-random number generation for reproducible results.
 
-![Dungeon Generator Screenshot](./screenshot.png)
+![Dungeon Generator Screenshot](./screenshot.gif)
 <!-- Replace with an actual screenshot or GIF of your generator -->
 
 ## Techniques
@@ -21,7 +21,7 @@ npm install
 npm run dev
 ```
 
-The app will be available at `http://localhost:xxxx`.
+The app will be available at `http://localhost:5173/`.
 
 ## Usage
 
